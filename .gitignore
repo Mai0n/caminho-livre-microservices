@@ -1,0 +1,11 @@
+# Dados do MySQL criados pelo docker compose
+compose/.data/
+.data/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Build
+target/

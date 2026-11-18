@@ -1,0 +1,82 @@
+# Solução completa em containers (Eureka, Gateway, microsserviços e MySQL)
+# Uso: docker compose up -d --build
+services:
+
+  mysqldb:
+    container_name: caminho-livre-mysql
+    image: mysql:8.4.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  eureka-server:
+    container_name: eureka-server
+    build: ./eureka-server
+    image: eureka-server:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+
+  api-gateway:
+    container_name: api-gateway
+    build: ./api-gateway
+    image: api-gateway:latest
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      # Dentro do Docker, registra o IP do container no Eureka
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+    networks:
+      - microservices-net
+    depends_on:
+      - eureka-server
+
+  ms-ocorrencias:
+    container_name: ms-ocorrencias
+    build: ./ms-ocorrencias
+    image: ms-ocorrencias:latest
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      # Dentro do Docker, registra o IP do container no Eureka
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/ocorrencias?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC
+    networks:
+      - microservices-net
+    restart: on-failure
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  ms-atendimentos:
+    container_name: ms-atendimentos
+    build: ./ms-atendimentos
+    image: ms-atendimentos:latest
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      # Dentro do Docker, registra o IP do container no Eureka
+      - EUREKA_INSTANCE_PREFERIPADDRESS=true
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/atendimentos?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC
+    networks:
+      - microservices-net
+    restart: on-failure
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+networks:
+  microservices-net:
+    driver: bridge
