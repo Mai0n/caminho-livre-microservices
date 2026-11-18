@@ -25,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-@Slf4j // do Lombok
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/atendimentos")
 public class AtendimentoController {
@@ -33,10 +33,9 @@ public class AtendimentoController {
     @Autowired
     private AtendimentoService atendimentoService;
 
-    // Testando load balancing: devolve a porta da instância
     @GetMapping("/port")
-    public String port(@Value("${local.server.port}") String porta) {
-        return "Instância respondeu na porta " + porta;
+    public ResponseEntity<String> port(@Value("${local.server.port}") String porta) {
+        return ResponseEntity.ok("Instância respondeu na porta " + porta);
     }
 
     @GetMapping
@@ -55,7 +54,6 @@ public class AtendimentoController {
         return ResponseEntity.ok(atendimentoDTO);
     }
 
-    // Abre o atendimento e coloca a ocorrência EM_ATENDIMENTO no ms-ocorrencias (OpenFeign)
     @PostMapping
     public ResponseEntity<AtendimentoResponseDTO> createAtendimento(@RequestBody @Valid
                                                                     AtendimentoRequestDTO requestDTO) {
@@ -89,7 +87,6 @@ public class AtendimentoController {
         return ResponseEntity.noContent().build();
     }
 
-    // Conclui o atendimento e marca a ocorrência como RESOLVIDA no ms-ocorrencias (OpenFeign)
     @PatchMapping("/{id}/concluir")
     @CircuitBreaker(name = "atualizarOcorrencia",
             fallbackMethod = "fallbackConcluirAtendimentoPendente")
@@ -100,10 +97,8 @@ public class AtendimentoController {
         return ResponseEntity.ok(atendimentoDTO);
     }
 
-    // metodo com a mesma assinatura e tipo de retorno de concluirAtendimento
     public ResponseEntity<AtendimentoResponseDTO> fallbackConcluirAtendimentoPendente(Long id, Throwable e) {
 
-        // Erros de regra de negócio (404 e 409) não são falha do ms-ocorrencias: devolve o erro original
         if (e instanceof ResourceNotFoundException resourceNotFoundException) {
             throw resourceNotFoundException;
         }
@@ -111,14 +106,12 @@ public class AtendimentoController {
             throw regraNegocioException;
         }
 
-        // Registra o erro para fins de log/observabilidade
         log.error("Falha ao concluir atendimento {}. Ativando fallback. Erro: {}", id, e.getMessage());
         AtendimentoResponseDTO atendimentoDTO = atendimentoService.alterarStatusParaConclusaoPendente(id);
-        // 503 - explicitar que o serviço destino falhou, mas ainda assim enviando o corpo.
+
         return ResponseEntity.status(503).body(atendimentoDTO);
     }
 
-    // Cancela o atendimento e devolve a ocorrência para ABERTA no ms-ocorrencias (OpenFeign)
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<AtendimentoResponseDTO> cancelarAtendimento(@PathVariable Long id) {
 

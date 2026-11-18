@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.9</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>br.com.fiap</groupId>
     <artifactId>ms-atendimentos</artifactId>
@@ -21,7 +21,6 @@
 
     <dependencies>
 
-        <!-- Flyway (no Spring Boot 4 a auto-configuração fica no starter) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-flyway</artifactId>
@@ -65,38 +64,31 @@
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
-        <!-- Eureka Client: registro do microsserviço no Eureka Server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!-- Cliente HTTP usado pelo Eureka Client no Spring Boot 4 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
 
-        <!-- OpenFeign: comunicação síncrona com o ms-ocorrencias -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!-- Load Balancer: o Feign escolhe uma das instâncias do ms-ocorrencias registradas no Eureka -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
-        <!-- Circuit Breaker (Resilience4j) com Fallback -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
         </dependency>
 
-        <!-- Necessário para a anotação @CircuitBreaker no Spring Boot 4
-             (no Spring Boot 3 vinha junto com o spring-boot-starter-data-jpa) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aspectj</artifactId>
@@ -147,12 +139,10 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <!-- Failed to execute goal org.apache.maven.plugins:maven-resources-plugin:3.2.0:resources
-                 (default-resources) on project application-etude: Input ength = 1 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version> <!--$NO-MVN-MAN-VER$ -->
+                <version>3.1.0</version>
             </plugin>
         </plugins>
     </build>

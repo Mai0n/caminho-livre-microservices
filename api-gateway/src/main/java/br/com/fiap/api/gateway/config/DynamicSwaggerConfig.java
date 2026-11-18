@@ -13,9 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Monta o Swagger do API Gateway a partir dos microsserviços registrados no Eureka.
- */
 @Component
 @EnableScheduling
 public class DynamicSwaggerConfig {

@@ -28,10 +28,9 @@ public class OcorrenciaController {
     @Autowired
     private OcorrenciaService ocorrenciaService;
 
-    // Testando load balancing: devolve a porta da instância
     @GetMapping("/port")
-    public String port(@Value("${local.server.port}") String porta) {
-        return "Instância respondeu na porta " + porta;
+    public ResponseEntity<String> port(@Value("${local.server.port}") String porta) {
+        return ResponseEntity.ok("Instância respondeu na porta " + porta);
     }
 
     @GetMapping
@@ -83,7 +82,6 @@ public class OcorrenciaController {
         return ResponseEntity.noContent().build();
     }
 
-    // Outro morador confirma a barreira (aumenta o índice de prioridade)
     @PatchMapping("/{id}/confirmar")
     public ResponseEntity<OcorrenciaResponseDTO> confirmarOcorrencia(@PathVariable Long id) {
 
@@ -91,8 +89,6 @@ public class OcorrenciaController {
 
         return ResponseEntity.ok(ocorrenciaDTO);
     }
-
-    // ===== Endpoints chamados pelo ms-atendimentos via OpenFeign (alteração de status) =====
 
     @PutMapping("/{id}/em-atendimento")
     public ResponseEntity<OcorrenciaResponseDTO> iniciarAtendimento(@PathVariable Long id) {

@@ -1,5 +1,3 @@
-# Solução completa em containers (Eureka, Gateway, microsserviços e MySQL)
-# Uso: docker compose up -d --build
 services:
 
   mysqldb:
@@ -32,7 +30,6 @@ services:
       - "8082:8082"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      # Dentro do Docker, registra o IP do container no Eureka
       - EUREKA_INSTANCE_PREFERIPADDRESS=true
     networks:
       - microservices-net
@@ -45,7 +42,6 @@ services:
     image: ms-ocorrencias:latest
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      # Dentro do Docker, registra o IP do container no Eureka
       - EUREKA_INSTANCE_PREFERIPADDRESS=true
       - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/ocorrencias?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC
@@ -64,7 +60,6 @@ services:
     image: ms-atendimentos:latest
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      # Dentro do Docker, registra o IP do container no Eureka
       - EUREKA_INSTANCE_PREFERIPADDRESS=true
       - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/atendimentos?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC

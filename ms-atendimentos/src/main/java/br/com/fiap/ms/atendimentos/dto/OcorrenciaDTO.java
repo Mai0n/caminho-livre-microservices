@@ -5,10 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Dados da ocorrência recebidos do ms-ocorrencias pelo OpenFeign.
- * Contém apenas os campos usados pelo ms-atendimentos.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

@@ -13,10 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Dados de entrada para registrar ou atualizar uma ocorrência.
- * O status, as confirmações e o índice de prioridade são definidos pelo sistema.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

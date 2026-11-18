@@ -13,10 +13,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-/**
- * Dados de entrada para abrir ou atualizar um atendimento.
- * O status e as datas de abertura e conclusão são definidos pelo sistema.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

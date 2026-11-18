@@ -38,10 +38,8 @@ public class Ocorrencia {
     private String bairro;
     private String cep;
 
-    // 1 (leve) a 5 (impede a passagem)
     private Integer gravidade;
 
-    // 3 = até 150 m de hospital, escola ou ponto de ônibus; 2 = 150 m a 400 m; 1 = mais longe
     @Column(name = "fator_entorno")
     private Integer fatorEntorno;
 

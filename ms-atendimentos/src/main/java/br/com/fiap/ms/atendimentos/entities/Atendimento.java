@@ -16,9 +16,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-/**
- * Ordem de serviço da equipe da prefeitura para resolver uma ocorrência.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -32,11 +29,9 @@ public class Atendimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ID da ocorrência no ms-ocorrencias (cada microsserviço tem seu próprio banco)
     @Column(name = "ocorrencia_id")
     private Long ocorrenciaId;
 
-    // Copiados do ms-ocorrencias no momento da abertura do atendimento
     @Column(name = "endereco_ocorrencia")
     private String enderecoOcorrencia;
 

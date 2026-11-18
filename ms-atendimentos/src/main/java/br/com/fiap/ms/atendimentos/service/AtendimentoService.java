@@ -44,10 +44,6 @@ public class AtendimentoService {
         return new AtendimentoResponseDTO(atendimento);
     }
 
-    /**
-     * Abre um atendimento para a ocorrência.
-     * Comunicação síncrona: o ms-ocorrencias altera a ocorrência de ABERTA para EM_ATENDIMENTO.
-     */
     @Transactional
     public AtendimentoResponseDTO saveAtendimento(AtendimentoRequestDTO requestDTO) {
 
@@ -64,7 +60,6 @@ public class AtendimentoService {
         atendimento.setEnderecoOcorrencia(ocorrenciaDTO.getLogradouro() + " - " + ocorrenciaDTO.getBairro());
         atendimento.setIndicePrioridade(ocorrenciaDTO.getIndicePrioridade());
 
-        // Valores definidos pelo sistema na abertura
         atendimento.setStatus(StatusAtendimento.AGENDADO);
         atendimento.setDataAbertura(LocalDate.now());
 
@@ -111,11 +106,6 @@ public class AtendimentoService {
         atendimentoRepository.deleteById(id);
     }
 
-    /**
-     * Conclui o atendimento.
-     * Comunicação síncrona: o ms-ocorrencias altera a ocorrência de EM_ATENDIMENTO para RESOLVIDA.
-     * Protegido pelo Circuit Breaker no AtendimentoController.
-     */
     @Transactional
     public AtendimentoResponseDTO concluirAtendimento(Long id) {
 
@@ -133,10 +123,6 @@ public class AtendimentoService {
         return new AtendimentoResponseDTO(atendimento);
     }
 
-    /**
-     * Estratégia do fallback quando o ms-ocorrencias está indisponível:
-     * o atendimento fica com CONCLUSAO_PENDENTE e pode ser concluído de novo depois.
-     */
     @Transactional
     public AtendimentoResponseDTO alterarStatusParaConclusaoPendente(Long id) {
 
@@ -147,10 +133,6 @@ public class AtendimentoService {
         return new AtendimentoResponseDTO(atendimento);
     }
 
-    /**
-     * Cancela o atendimento.
-     * Comunicação síncrona: o ms-ocorrencias altera a ocorrência de EM_ATENDIMENTO para ABERTA.
-     */
     @Transactional
     public AtendimentoResponseDTO cancelarAtendimento(Long id) {
 
@@ -174,7 +156,6 @@ public class AtendimentoService {
         );
     }
 
-    // Atendimento ainda não finalizado: AGENDADO ou CONCLUSAO_PENDENTE
     private Atendimento buscarAtendimentoEmAndamento(Long id) {
 
         Atendimento atendimento = buscarAtendimento(id);
@@ -188,21 +169,19 @@ public class AtendimentoService {
         return atendimento;
     }
 
-    // Converte as respostas de erro do ms-ocorrencias em exceções da aplicação
     private RuntimeException tratarFalhaMsOcorrencias(FeignException e, Long ocorrenciaId) {
 
         if (e instanceof FeignException.NotFound) {
-            // 404 do ms-ocorrencias: não existe ocorrência com esse ID
+
             return new ResourceNotFoundException("Ocorrência não encontrada. ID: " + ocorrenciaId);
         }
 
         if (e instanceof FeignException.Conflict) {
-            // 409 do ms-ocorrencias: o status atual da ocorrência não permite a operação
+
             return new RegraNegocioException(String.format(
                     "O status atual da ocorrência id: %d não permite esta operação", ocorrenciaId));
         }
 
-        // outros erros (500/503/timeout/sem instâncias etc.)
         return new ServicoIndisponivelException("Falha ao comunicar com ms-ocorrencias. "
                 + "Tente novamente mais tarde.");
     }

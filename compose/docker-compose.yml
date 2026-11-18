@@ -1,5 +1,3 @@
-# MySQL para executar os microsserviços pelo IntelliJ ou pelo Maven
-# Uso: docker compose -f compose/docker-compose.yml up -d
 services:
   mysqldb:
     container_name: mysql_846

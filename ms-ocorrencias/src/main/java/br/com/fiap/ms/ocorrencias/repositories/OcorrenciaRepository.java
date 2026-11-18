@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface OcorrenciaRepository extends JpaRepository<Ocorrencia, Long> {
 
-    // Fila de ocorrências: maior prioridade primeiro
     List<Ocorrencia> findAllByOrderByIndicePrioridadeDesc();
 }

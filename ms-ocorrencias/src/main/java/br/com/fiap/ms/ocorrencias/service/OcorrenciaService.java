@@ -18,7 +18,6 @@ import java.util.List;
 @Service
 public class OcorrenciaService {
 
-    // Regra do índice de prioridade do Caminho Livre
     private static final double BONUS_POR_CONFIRMACAO = 0.5;
     private static final double BONUS_MAXIMO = 3.0;
 
@@ -47,7 +46,6 @@ public class OcorrenciaService {
         Ocorrencia ocorrencia = new Ocorrencia();
         copyDtoToOcorrencia(requestDTO, ocorrencia);
 
-        // Valores definidos pelo sistema no cadastro
         ocorrencia.setStatus(StatusOcorrencia.ABERTA);
         ocorrencia.setConfirmacoes(0);
         ocorrencia.setDataRegistro(LocalDate.now());
@@ -84,9 +82,6 @@ public class OcorrenciaService {
         ocorrenciaRepository.deleteById(id);
     }
 
-    /**
-     * Outro morador confirma que a barreira existe: +0,5 no índice (máximo +3).
-     */
     @Transactional
     public OcorrenciaResponseDTO confirmarOcorrencia(Long id) {
 
@@ -103,30 +98,18 @@ public class OcorrenciaService {
         return new OcorrenciaResponseDTO(ocorrencia);
     }
 
-    /**
-     * Chamado pelo ms-atendimentos (OpenFeign) quando um atendimento é aberto.
-     * ABERTA -> EM_ATENDIMENTO
-     */
     @Transactional
     public OcorrenciaResponseDTO iniciarAtendimento(Long id) {
 
         return alterarStatus(id, StatusOcorrencia.ABERTA, StatusOcorrencia.EM_ATENDIMENTO);
     }
 
-    /**
-     * Chamado pelo ms-atendimentos (OpenFeign) quando o atendimento é concluído.
-     * EM_ATENDIMENTO -> RESOLVIDA
-     */
     @Transactional
     public OcorrenciaResponseDTO resolverOcorrencia(Long id) {
 
         return alterarStatus(id, StatusOcorrencia.EM_ATENDIMENTO, StatusOcorrencia.RESOLVIDA);
     }
 
-    /**
-     * Chamado pelo ms-atendimentos (OpenFeign) quando o atendimento é cancelado.
-     * EM_ATENDIMENTO -> ABERTA
-     */
     @Transactional
     public OcorrenciaResponseDTO reabrirOcorrencia(Long id) {
 
@@ -156,10 +139,6 @@ public class OcorrenciaService {
         );
     }
 
-    /**
-     * Índice = gravidade x fator de entorno + bônus de confirmações (0,5 cada, até 3).
-     * Exemplo: rampa ausente (4) perto de hospital (3) com 5 confirmações = 4 x 3 + 2,5 = 14,5
-     */
     private Double calcularIndicePrioridade(Ocorrencia ocorrencia) {
 
         double bonus = Math.min(ocorrencia.getConfirmacoes() * BONUS_POR_CONFIRMACAO, BONUS_MAXIMO);

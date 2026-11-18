@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<CustomErrorDto> handleResourceNotFound(ResourceNotFoundException e,
                                                                  HttpServletRequest request) {
-        HttpStatus status = HttpStatus.NOT_FOUND; //404
+        HttpStatus status = HttpStatus.NOT_FOUND;
         CustomErrorDto err = new CustomErrorDto(Instant.now(), status.value(),
                 e.getMessage(), request.getRequestURI());
 
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CustomErrorDto> handlerMethodArgumentNotValid(MethodArgumentNotValidException e,
                                                                         HttpServletRequest request) {
 
-        HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT; //422
+        HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
 
         ValidationErrorDto err = new ValidationErrorDto(Instant.now(), status.value(),
                 "Dados inválidos", request.getRequestURI());
@@ -76,32 +76,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CustomErrorDto> handleDatabase(DatabaseException e,
                                                          HttpServletRequest request){
 
-        HttpStatus status = HttpStatus.CONFLICT; //409
+        HttpStatus status = HttpStatus.CONFLICT;
         CustomErrorDto err = new CustomErrorDto(Instant.now(), status.value(),
                 e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(status).body(err);
     }
-
 
     @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<CustomErrorDto> handleRegraNegocio(RegraNegocioException e,
                                                              HttpServletRequest request) {
 
-        HttpStatus status = HttpStatus.CONFLICT; //409
+        HttpStatus status = HttpStatus.CONFLICT;
         CustomErrorDto err = new CustomErrorDto(Instant.now(), status.value(),
                 e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(status).body(err);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<CustomErrorDto> handleGenericException(Exception e, HttpServletRequest request){
-//
-//        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        CustomErrorDto err = new CustomErrorDto(Instant.now(), status.value(),
-//                "Erro interno inesperado", request.getRequestURI());
-//
-//        return ResponseEntity.status(status).body(err);
-//    }
 }
